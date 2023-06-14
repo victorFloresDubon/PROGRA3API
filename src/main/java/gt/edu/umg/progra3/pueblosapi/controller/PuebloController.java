@@ -15,14 +15,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
 
 @Tag(name = "Pueblo", description = "Información sobre los pueblos")
-@Controller
+@RestController
+@CrossOrigin(maxAge = 3600, origins = "http://localhost:5500")
 @RequestMapping("/pueblos")
 public class PuebloController {
 

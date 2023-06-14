@@ -9,21 +9,17 @@ import org.springframework.stereotype.Service;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
 public class PuebloServiceImpl implements PuebloService {
 
     private static final String MAIN_DATASET = "habitantes.csv";
-    private PuebloData puebloData;
+    private final PuebloData puebloData;
 
     public PuebloServiceImpl() {
         this.puebloData = new PuebloData();
-    }
-
-    @Override
-    public List<Pueblo> getPueblos() {
-        return puebloData.getPueblos();
     }
 
     @Override
@@ -58,11 +54,31 @@ public class PuebloServiceImpl implements PuebloService {
 
     @Override
     public void eliminarPuebloPorId(String id) {
+        puebloData.eliminarPuebloPorId(id);
+    }
 
+    @Override
+    public void eliminarHabitante(String puebloId, String habitante) {
+        puebloData.eliminarHabitante(puebloId, habitante);
     }
 
     @Override
     public boolean isPuebloCreado(String id) {
         return puebloData.isPuebloExistente(id);
+    }
+
+    @Override
+    public List<HashMap<String, Object>> getPueblosResumen() {
+        return puebloData.getPueblosResumen();
+    }
+
+    @Override
+    public void actualizar(String puebloId, String nombreActual, String nuevoNombre) {
+        puebloData.actualizarHabitante(puebloId, nombreActual, nuevoNombre);
+    }
+
+    @Override
+    public boolean isHabitanteRegistrado(String puebloId, String habitanteId) {
+        return false;
     }
 }

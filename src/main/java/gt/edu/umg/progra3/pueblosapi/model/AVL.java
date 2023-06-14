@@ -94,10 +94,10 @@ public class AVL {
 
     /**
      * Obtiene el factor de balance de un nodo
-     * @param nodo
+     * @param nodo nodo
      * @return factor de balance
      */
-    public int getBalance(Nodo nodo){
+    private int getBalance(Nodo nodo){
         if (nodo == null)
             return 0;
         return getAlturaNodo(nodo.getIzquierda()) - getAlturaNodo(nodo.getDerecha());
@@ -206,7 +206,7 @@ public class AVL {
         return getKeysInorden(raiz);
     }
 
-    public List<String> getKeysInorden(Nodo nodo){
+    private List<String> getKeysInorden(Nodo nodo){
         List<String> list = new ArrayList<>();
         if (nodo != null){
             getKeysInorden(nodo.getIzquierda());
@@ -276,8 +276,58 @@ public class AVL {
         return nodo;
     }
 
-    public void actualizar(String nuevoHabitante){
 
+    public void actualizar(String actual, String nuevo){
+        raiz = actualizarNodo(raiz, actual, nuevo);
     }
 
+    private Nodo actualizarNodo(Nodo nodo, String actual, String nuevo){
+        // Si el nodo no existe entonces no retornamos ningún dato
+        if(nodo == null)
+            return null;
+
+        int cmp = actual.compareTo(nodo.getHabitante());
+
+        if(cmp < 0){
+            // El nodo a actualizar está en el subárbol izquierdo
+            nodo.setIzquierda(actualizarNodo(nodo.getIzquierda(), actual, nuevo));
+        } else if (cmp > 0) {
+            // El nodo a actualizar está en el subárbol derecho
+            nodo.setDerecha(actualizarNodo(nodo.getDerecha(), actual, nuevo));
+        } else {
+            // Se ha encontrado el nodo a actualizar
+            nodo.setHabitante(nuevo);
+        }
+
+        // Actualizamos la altura del nodo
+        actualizarAltura(nodo);
+
+        // Obtenemos el factor de equilibrio del nodo actual
+        int balance = getBalance(nodo);
+
+        // Casos de desequilibrio y rotaciones
+        // Izquierda - Izquierda
+        if (balance > 1 && actual.compareTo(nodo.getIzquierda().getHabitante()) < 0){
+            return rotarDerecha(nodo);
+        }
+
+        // Derecha - Derecha
+        if (balance < -1 && actual.compareTo(nodo.getDerecha().getHabitante()) > 0){
+            return rotarIzquierda(nodo);
+        }
+
+        // Izquierda - Derecha
+        if (balance > 1 && actual.compareTo(nodo.getIzquierda().getHabitante()) > 0){
+            nodo.setIzquierda(rotarIzquierda(nodo.getIzquierda()));
+            return rotarDerecha(nodo);
+        }
+
+        // Derecha - Izquierda
+        if (balance < -1 && actual.compareTo(nodo.getDerecha().getHabitante()) < 0){
+            nodo.setDerecha(rotarDerecha(nodo.getDerecha()));
+            return rotarIzquierda(nodo);
+        }
+
+        return nodo;
+    }
 }

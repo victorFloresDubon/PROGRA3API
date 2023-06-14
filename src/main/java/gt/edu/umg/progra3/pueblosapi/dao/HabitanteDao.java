@@ -9,5 +9,6 @@ public class HabitanteDao {
 
     private String pueblo;
     private String habitante;
+    private String nuevoNombre;
 
 }

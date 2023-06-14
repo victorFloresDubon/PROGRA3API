@@ -3,7 +3,6 @@ package gt.edu.umg.progra3.pueblosapi.controller;
 import gt.edu.umg.progra3.pueblosapi.dao.HabitanteDao;
 import gt.edu.umg.progra3.pueblosapi.dao.PuebloDao;
 import gt.edu.umg.progra3.pueblosapi.model.Mensaje;
-import gt.edu.umg.progra3.pueblosapi.model.Pueblo;
 import gt.edu.umg.progra3.pueblosapi.service.PuebloService;
 import gt.edu.umg.progra3.pueblosapi.service.PuebloServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,11 +12,13 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Tag(name = "Pueblo", description = "Información sobre los pueblos")
@@ -33,7 +34,7 @@ public class PuebloController {
 
     /**
      * Lista todos los pueblos registrados
-     * @return
+     * @return listado de pueblos con su respectiva población
      */
     @Operation(
             summary = "Listar todos los pueblos",
@@ -47,7 +48,7 @@ public class PuebloController {
                                             mediaType = "application/json",
                                             array = @ArraySchema(
                                                     schema = @Schema(
-                                                            implementation = Pueblo.class
+                                                            implementation = HashMap.class
                                                     )
                                             )
                                     )
@@ -73,10 +74,11 @@ public class PuebloController {
 
     )
     @GetMapping("/")
-    public ResponseEntity<List<Pueblo>> getPueblos(){
-        List<Pueblo> list = puebloService.getPueblos();
+    public ResponseEntity<?> getPueblos(){
+        //List<Pueblo> list = puebloService.getPueblos();
+        List<HashMap<String, Object>> list = puebloService.getPueblosResumen();
         if(list.isEmpty()){
-            return new ResponseEntity(new Mensaje("No se encontraron pueblos registrados"), HttpStatusCode.valueOf(404));
+            return new ResponseEntity<>(new Mensaje("No se encontraron pueblos registrados"), HttpStatusCode.valueOf(404));
         }
         return new ResponseEntity<>(list, HttpStatusCode.valueOf(200));
     }
@@ -157,8 +159,8 @@ public class PuebloController {
             }
     )
     @DeleteMapping("/eliminarHabitante")
-    public ResponseEntity<?> eliminarHabitante(@RequestParam(name = "pueblo") String id){
-        puebloService.eliminarPuebloPorId(id);
+    public ResponseEntity<?> eliminarHabitante(@RequestParam(name = "pueblo") String puebloId, @RequestParam(name = "habitante") String habitante){
+        puebloService.eliminarHabitante(puebloId, habitante);
         return new ResponseEntity<>(new Mensaje("Pueblo eliminado exitosamente!"), HttpStatusCode.valueOf(200));
     }
 
@@ -188,4 +190,33 @@ public class PuebloController {
         return new ResponseEntity<>(new Mensaje("Pueblo eliminado exitosamente!"), HttpStatusCode.valueOf(200));
     }
 
+    @Operation(
+            summary = "Actializar un habitante",
+            description = "Actualiza el nombre de un habitante dentro de un pueblo",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Habitante Actualizado",
+                            content = {
+                                    @Content(
+                                            mediaType = "application/json",
+                                            schema = @Schema(implementation = Mensaje.class),
+                                            examples = @ExampleObject(
+                                                    name = "Pueblo-200",
+                                                    value = "{\"mensaje\": \"Habitante Actualizado!\"}"
+                                            )
+                                    )
+                            }
+                    )
+            }
+    )
+    @PutMapping("/actualizar-habitante")
+    public ResponseEntity<?> actualizarHabitante(@RequestBody HabitanteDao habitanteDao){
+        // Si el habitante no existe entonces retornar BAD REQUEST
+        if(!puebloService.isHabitanteRegistrado(habitanteDao.getPueblo(), habitanteDao.getHabitante()))
+            return new ResponseEntity<>(new Mensaje("ID de habitante no existe"), HttpStatusCode.valueOf(400));
+
+        puebloService.actualizar(habitanteDao.getPueblo(), habitanteDao.getHabitante(), habitanteDao.getNuevoNombre());
+        return new ResponseEntity<>(new Mensaje("Habitante Actualizado"), HttpStatus.OK);
+    }
 }

@@ -22,7 +22,6 @@ import java.util.List;
 
 @Tag(name = "Pueblo", description = "Información sobre los pueblos")
 @RestController
-@CrossOrigin(maxAge = 3600, origins = "http://localhost:5500")
 @RequestMapping("/pueblos")
 public class PuebloController {
 

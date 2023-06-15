@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Esta clase es para el manejo de la base de datos de pueblos
+ */
 @Data
 public class PuebloData {
 
@@ -72,6 +75,8 @@ public class PuebloData {
         // Buscamos el pueblo por su ID
         Pueblo pueblo = buscarPuebloPorId(puebloId);
         pueblo.getArbolAvl().eliminar(habitante);
+        // Actualizamos la población del pueblo
+        pueblo.actualizarPoblacion();
     }
     /**
      * Valida si un pueblo existe creado dentro de la lista
@@ -105,7 +110,7 @@ public class PuebloData {
      * Verifica si un habitante existe registrado dentro de un pueblo
      * @param puebloId Id del pueblo a buscar
      * @param habitanteId Id del habitante a buscar
-     * @return
+     * @return <code>true</code> si el habitante está registrado
      */
     public boolean isHabitanteRegistrado(String puebloId, String habitanteId){
         Pueblo pueblo = buscarPuebloPorId(puebloId);

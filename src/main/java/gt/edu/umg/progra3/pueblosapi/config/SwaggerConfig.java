@@ -15,8 +15,8 @@ public class SwaggerConfig {
                 .info(new Info()
                         .title("Pueblos API")
                         .contact(new Contact()
-                                .name("Eduardo")
-                                .email("vdubon@outlook.com")
+                                .name("Jose Eduardo de León Pineda")
+                                .email("jdeleonp9@miumg.edu.gt")
                         )
                         .version("1.0")
                 );

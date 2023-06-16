@@ -104,6 +104,9 @@ public class PuebloController {
     )
     @PostMapping("/crear-pueblo")
     public ResponseEntity<?> crearPrueblo(@RequestBody PuebloDao puebloDao){
+        // Validamos si el pueblo existe ya creado
+        if(!puebloService.isPuebloCreado(puebloDao.getNombre()))
+            return new ResponseEntity<>(new Mensaje(String.format("%s ya existe", puebloDao.getNombre())), HttpStatusCode.valueOf(400));
         puebloService.crearPueblo(puebloDao);
         return new ResponseEntity<>(new Mensaje("Pueblo creado!"), HttpStatusCode.valueOf(200));
     }
@@ -190,7 +193,7 @@ public class PuebloController {
     }
 
     @Operation(
-            summary = "Actializar un habitante",
+            summary = "Actualizar un habitante",
             description = "Actualiza el nombre de un habitante dentro de un pueblo",
             responses = {
                     @ApiResponse(
